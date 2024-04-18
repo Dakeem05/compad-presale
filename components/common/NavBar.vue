@@ -66,7 +66,7 @@
 
 <template>
   <section class="bg-[rgba(255,_255,_255,_0.14)]  [box-shadow:0_4px_30px_rgba(0,_0,_0,_0.1)] backdrop-filter backdrop-blur-[12.6px] border-b-[1px] border-b-[solid] border-b-[rgba(255,255,255,0.75)] lg:hidden  pt-[0.7rem] pb-[0.7rem] px-[0.7rem] xs:px-[2rem] sm:px-[3rem] z-[60] fixed top-0 left-0 flex right-0 w-full">
-    <button class="glass py-3 px-[1rem] sm:px-[2rem] font-medium rounded-md">
+    <button  @click="connectHandler" class="glass py-3 px-[1rem] sm:px-[2rem] font-medium rounded-md">
       <div v-if="isConnected">Buy <span class="text-[#FFA500] font-bold">$COM</span></div>
                   <span v-else>{{ btnText }}</span>
     </button>
