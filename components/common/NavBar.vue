@@ -5,6 +5,8 @@
     const side = ref(null)
     let isSide = ref(false);
     let downP = ref(false);
+    let btnText = ref('Connect wallet');
+    let isConnected = ref(false);
         const scrollHandler = () => {
           scroll.value = window.scrollY
            if(scroll.value !== 0 ){
@@ -49,12 +51,25 @@
       emit('route', route)
     activeRoute.value = route
   }
+
+  async function connectHandler () {
+    if(typeof window.ethereum != undefined){
+      await window.ethereum.request({method: "eth_requestAccounts"});
+      isConnected.value = true;
+    } else {
+      isConnected.value = false;
+      btnText.value = 'Install metamask';
+    }
+  }
 </script>
 
 
 <template>
   <section class="bg-[rgba(255,_255,_255,_0.14)]  [box-shadow:0_4px_30px_rgba(0,_0,_0,_0.1)] backdrop-filter backdrop-blur-[12.6px] border-b-[1px] border-b-[solid] border-b-[rgba(255,255,255,0.75)] lg:hidden  pt-[0.7rem] pb-[0.7rem] px-[0.7rem] xs:px-[2rem] sm:px-[3rem] z-[60] fixed top-0 left-0 flex right-0 w-full">
-    <button class="glass py-3 px-[1rem] sm:px-[2rem] font-medium rounded-md">Buy <span class="text-[#FFA500] font-bold">$COM</span></button>
+    <button class="glass py-3 px-[1rem] sm:px-[2rem] font-medium rounded-md">
+      <div v-if="isConnected">Buy <span class="text-[#FFA500] font-bold">$COM</span></div>
+                  <span v-else>{{ btnText }}</span>
+    </button>
             <div class=" w-fit absolute top-2/4 left-2/4 -translate-x-1/2 -translate-y-1/2 mx-auto">
               <router-link to="/" class="text-[2.2rem] text-black flex gap-2 font-surfer font-[400]">
                 <div class=" flex">
@@ -92,7 +107,10 @@
                 </ul>
             </div>
             <div>
-                <button class="glass py-3 px-[2rem] font-medium mt-[1.4rem] rounded-md">Buy presale <span class="text-[#FFA500] font-bold">$COM</span></button>
+                <button @click="connectHandler" class="glass py-3 px-[2rem] font-medium mt-[1.4rem] rounded-md">
+                  <div v-if="isConnected">Buy presale <span class="text-[#FFA500] font-bold">$COM</span></div>
+                  <span v-else>{{ btnText }}</span>
+                </button>
             </div>
         </div>
     </section>
