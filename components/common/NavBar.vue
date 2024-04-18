@@ -1,6 +1,9 @@
 <script setup>
 import { set } from "~/node_modules/nuxt/dist/app/compat/capi";
+import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi'
 
+import { bsc } from 'viem/chains'
+import { reconnect } from '@wagmi/core'
    let scrolled = ref(false);
   let scroll = ref(0)
   let bnbBalance = ref(0)
@@ -55,103 +58,132 @@ import { set } from "~/node_modules/nuxt/dist/app/compat/capi";
     activeRoute.value = route
   }
 
-  async function connectHandler () {
-    if(typeof window.ethereum != undefined){
-      try {
-        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-        const account = accounts[0];
-        isConnected.value = true;
-        const chainId = '0x38';
-        const currentChainId = await getCurrentChainId();
-        try {
-          if (currentChainId === chainId) {
-            // return;
-          } else {
-            await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [
-                {
-                  chainId,
-                  chainName: 'Binance Smart Chain',
-                  nativeCurrency: {
-                    name: 'BNB',
-                    symbol: 'bnb',
-                    decimals: 18,
-                  },
-                  rpcUrls: ['https://bsc-dataseed.binance.org/'],
-                  blockExplorerUrls: ['https://bscscan.com/'],
-                },
-              ],
-            });
-          }
-          await window.ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId }],
-          });
-        } catch (error) {
-          console.error('Error adding and switching to BSC network:', error);
-        }
-        async function getCurrentChainId() {
-          try {
-            const chainId = await window.ethereum.request({
-              method: 'eth_chainId',
-            });
-            return chainId;
-          } catch (error) {
-            console.error('Error getting current chain ID:', error);
-            return null;
-          }
-        }
-        // const account = await connectWallet();
-        // if (account) {
-        //   const balance = await getBSCBalance(account);
-        //   bnbBalance.value = balance;
-        //   console.log(account);
-        //   console.log(bnbBalance.value);
-        // }
-        console.log(account);
-        try {
-          const balance = await window.ethereum.request({
-            method: 'eth_getBalance',
-            params: [account, 'latest'],
-          });
+//   async function connectHandler () {
+//     if(typeof window.ethereum != undefined){
+//       try {
+//         const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+//         const account = accounts[0];
+//         isConnected.value = true;
+//         const chainId = '0x38';
+//         const currentChainId = await getCurrentChainId();
+//         try {
+//           if (currentChainId === chainId) {
+//             // return;
+//           } else {
+//             await window.ethereum.request({
+//               method: 'wallet_addEthereumChain',
+//               params: [
+//                 {
+//                   chainId,
+//                   chainName: 'Binance Smart Chain',
+//                   nativeCurrency: {
+//                     name: 'BNB',
+//                     symbol: 'bnb',
+//                     decimals: 18,
+//                   },
+//                   rpcUrls: ['https://bsc-dataseed.binance.org/'],
+//                   blockExplorerUrls: ['https://bscscan.com/'],
+//                 },
+//               ],
+//             });
+//           }
+//           await window.ethereum.request({
+//             method: 'wallet_switchEthereumChain',
+//             params: [{ chainId }],
+//           });
+//         } catch (error) {
+//           console.error('Error adding and switching to BSC network:', error);
+//         }
+//         async function getCurrentChainId() {
+//           try {
+//             const chainId = await window.ethereum.request({
+//               method: 'eth_chainId',
+//             });
+//             return chainId;
+//           } catch (error) {
+//             console.error('Error getting current chain ID:', error);
+//             return null;
+//           }
+//         }
+//         // const account = await connectWallet();
+//         // if (account) {
+//         //   const balance = await getBSCBalance(account);
+//         //   bnbBalance.value = balance;
+//         //   console.log(account);
+//         //   console.log(bnbBalance.value);
+//         // }
+//         console.log(account);
+//         try {
+//           const balance = await window.ethereum.request({
+//             method: 'eth_getBalance',
+//             params: [account, 'latest'],
+//           });
 
-        // Convert balance from Wei to BNB
-        // const balanceInBNB = window.ethereum.utils.fromWei(balance, 'ether');
-        // console.log('BSC Balance:', balanceInBNB, 'BNB');
-        // console.log(balanceInBNB);
-        // console.log('answer');
-console.log(await window.ethereum.request({method: 'eth_utils'}));
-        if (window.ethereum.request({method: 'eth_utils'})) {
-      // Convert balance from Wei to BNB
-      console.log('fixed');
-      const balanceInBNB = window.ethereum.request({method: 'eth_utils'}).fromWei(balance, 'ether');
-      console.log('BSC Balance:', balanceInBNB, 'BNB');
-      return balanceInBNB;
-    } else {
-      console.error('window.ethereum.utils is undefined');
-      return 'Error fetching balance';
-    }
-        // return balanceInBNB;
-      } catch (error) {
-        console.error('Error fetching BSC balance:', error);
-        // return 'Error fetching balance';
-      }
-      console.log('after');
+//         // Convert balance from Wei to BNB
+//         // const balanceInBNB = window.ethereum.utils.fromWei(balance, 'ether');
+//         // console.log('BSC Balance:', balanceInBNB, 'BNB');
+//         // console.log(balanceInBNB);
+//         // console.log('answer');
+// console.log(await window.ethereum.request({method: 'eth_utils'}));
+//         if (window.ethereum.request({method: 'eth_utils'})) {
+//       // Convert balance from Wei to BNB
+//       console.log('fixed');
+//       const balanceInBNB = window.ethereum.request({method: 'eth_utils'}).fromWei(balance, 'ether');
+//       console.log('BSC Balance:', balanceInBNB, 'BNB');
+//       return balanceInBNB;
+//     } else {
+//       console.error('window.ethereum.utils is undefined');
+//       return 'Error fetching balance';
+//     }
+//         // return balanceInBNB;
+//       } catch (error) {
+//         console.error('Error fetching BSC balance:', error);
+//         // return 'Error fetching balance';
+//       }
+//       console.log('after');
 
-        return account;
-      } catch (error) {
-        isConnected.value = false;
-        btnText.value = 'Connection denied';
-        setTimeout(() => {
-          btnText.value = 'Connect wallet';
-        }, 2000);
-      }
-    } else {
-      isConnected.value = false;
-      btnText.value = 'Install metamask';
-    }
-  }
+//         return account;
+//       } catch (error) {
+//         isConnected.value = false;
+//         btnText.value = 'Connection denied';
+//         setTimeout(() => {
+//           btnText.value = 'Connect wallet';
+//         }, 2000);
+//       }
+//     } else {
+//       isConnected.value = false;
+//       btnText.value = 'Install metamask';
+//     }
+//   }
+
+const projectId = '064d0a124217d401cda6999baf496215'
+
+// 2. Create wagmiConfig
+const metadata = {
+  name: 'Compad | Private Presale',
+  description: 'Compad private presale website',
+  url: 'http://localhost:3000/', // origin must match your domain & subdomain
+  icons: ['https://pbs.twimg.com/profile_images/1685353964450004993/7q2iSxcW_400x400.jpg']
+}
+
+const chains = [bsc]
+const config = defaultWagmiConfig({
+  chains,
+  projectId,
+  metadata,
+  // ...wagmiOptions // Optional - Override createConfig parameters
+})
+
+async function connectHandler(){
+  reconnect(config)
+  // 3. Create modal
+  createWeb3Modal({
+    wagmiConfig: config,
+    projectId,
+    enableAnalytics: true, // Optional - defaults to your Cloud configuration
+    enableOnramp: true // Optional - false as default
+  })
+}
 </script>
 
 
