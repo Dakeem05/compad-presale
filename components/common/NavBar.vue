@@ -1,9 +1,34 @@
 <script setup>
 import { set } from "~/node_modules/nuxt/dist/app/compat/capi";
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi'
-
+import { useWeb3Modal } from '@web3modal/wagmi/vue'  
 import { bsc } from 'viem/chains'
 import { reconnect } from '@wagmi/core'
+const projectId = '064d0a124217d401cda6999baf496215'
+
+// 2. Create wagmiConfig
+const metadata = {
+  name: 'Compad | Private Presale',
+  description: 'Compad private presale website',
+  url: 'http://localhost:3000/', // origin must match your domain & subdomain
+  icons: ['https://pbs.twimg.com/profile_images/1685353964450004993/7q2iSxcW_400x400.jpg']
+}
+
+const chains = [bsc]
+const config = defaultWagmiConfig({
+  chains,
+  projectId,
+  metadata,
+  // ...wagmiOptions // Optional - Override createConfig parameters
+})
+
+
+// const modal = useWeb3Modal(createWeb3Modal({
+//   wagmiConfig: config,
+//   projectId,
+//   enableAnalytics: true, // Optional - defaults to your Cloud configuration
+//   enableOnramp: true // Optional - false as default
+// }))
    let scrolled = ref(false);
   let scroll = ref(0)
   let bnbBalance = ref(0)
@@ -156,33 +181,18 @@ import { reconnect } from '@wagmi/core'
 //     }
 //   }
 
-const projectId = '064d0a124217d401cda6999baf496215'
-
-// 2. Create wagmiConfig
-const metadata = {
-  name: 'Compad | Private Presale',
-  description: 'Compad private presale website',
-  url: 'http://localhost:3000/', // origin must match your domain & subdomain
-  icons: ['https://pbs.twimg.com/profile_images/1685353964450004993/7q2iSxcW_400x400.jpg']
-}
-
-const chains = [bsc]
-const config = defaultWagmiConfig({
-  chains,
-  projectId,
-  metadata,
-  // ...wagmiOptions // Optional - Override createConfig parameters
-})
 
 async function connectHandler(){
+  // modal.open();
   reconnect(config)
-  // 3. Create modal
-  createWeb3Modal({
-    wagmiConfig: config,
-    projectId,
-    enableAnalytics: true, // Optional - defaults to your Cloud configuration
-    enableOnramp: true // Optional - false as default
-  })
+// 3. Create modal
+createWeb3Modal({
+  wagmiConfig: config,
+  projectId,
+  enableAnalytics: true, // Optional - defaults to your Cloud configuration
+  enableOnramp: true // Optional - false as default
+})
+isConnected.value = false;
 }
 </script>
 
@@ -233,6 +243,7 @@ async function connectHandler(){
                 </ul>
             </div>
             <div>
+              <w3m-button/>
                 <button @click="connectHandler" class="glass py-3 px-[2rem] font-medium mt-[1.4rem] rounded-md">
                   <div v-if="isConnected">Buy presale <span class="text-[#FFA500] font-bold">$COM</span></div>
                   <span v-else>{{ btnText }}</span>
