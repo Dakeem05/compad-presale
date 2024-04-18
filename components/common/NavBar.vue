@@ -1,6 +1,9 @@
 <script setup>
+import { set } from "~/node_modules/nuxt/dist/app/compat/capi";
+
    let scrolled = ref(false);
   let scroll = ref(0)
+  let bnbBalance = ref(0)
     let ul = ref(null);
     const side = ref(null)
     let isSide = ref(false);
@@ -54,8 +57,96 @@
 
   async function connectHandler () {
     if(typeof window.ethereum != undefined){
-      await window.ethereum.request({method: "eth_requestAccounts"});
-      isConnected.value = true;
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        const account = accounts[0];
+        isConnected.value = true;
+        const chainId = '0x38';
+        const currentChainId = await getCurrentChainId();
+        try {
+          if (currentChainId === chainId) {
+            // return;
+          } else {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [
+                {
+                  chainId,
+                  chainName: 'Binance Smart Chain',
+                  nativeCurrency: {
+                    name: 'BNB',
+                    symbol: 'bnb',
+                    decimals: 18,
+                  },
+                  rpcUrls: ['https://bsc-dataseed.binance.org/'],
+                  blockExplorerUrls: ['https://bscscan.com/'],
+                },
+              ],
+            });
+          }
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId }],
+          });
+        } catch (error) {
+          console.error('Error adding and switching to BSC network:', error);
+        }
+        async function getCurrentChainId() {
+          try {
+            const chainId = await window.ethereum.request({
+              method: 'eth_chainId',
+            });
+            return chainId;
+          } catch (error) {
+            console.error('Error getting current chain ID:', error);
+            return null;
+          }
+        }
+        // const account = await connectWallet();
+        // if (account) {
+        //   const balance = await getBSCBalance(account);
+        //   bnbBalance.value = balance;
+        //   console.log(account);
+        //   console.log(bnbBalance.value);
+        // }
+        console.log(account);
+        try {
+          const balance = await window.ethereum.request({
+            method: 'eth_getBalance',
+            params: [account, 'latest'],
+          });
+
+        // Convert balance from Wei to BNB
+        // const balanceInBNB = window.ethereum.utils.fromWei(balance, 'ether');
+        // console.log('BSC Balance:', balanceInBNB, 'BNB');
+        // console.log(balanceInBNB);
+        // console.log('answer');
+console.log(await window.ethereum.request({method: 'eth_utils'}));
+        if (window.ethereum.request({method: 'eth_utils'})) {
+      // Convert balance from Wei to BNB
+      console.log('fixed');
+      const balanceInBNB = window.ethereum.request({method: 'eth_utils'}).fromWei(balance, 'ether');
+      console.log('BSC Balance:', balanceInBNB, 'BNB');
+      return balanceInBNB;
+    } else {
+      console.error('window.ethereum.utils is undefined');
+      return 'Error fetching balance';
+    }
+        // return balanceInBNB;
+      } catch (error) {
+        console.error('Error fetching BSC balance:', error);
+        // return 'Error fetching balance';
+      }
+      console.log('after');
+
+        return account;
+      } catch (error) {
+        isConnected.value = false;
+        btnText.value = 'Connection denied';
+        setTimeout(() => {
+          btnText.value = 'Connect wallet';
+        }, 2000);
+      }
     } else {
       isConnected.value = false;
       btnText.value = 'Install metamask';
@@ -66,7 +157,7 @@
 
 <template>
   <section class="bg-[rgba(255,_255,_255,_0.14)]  [box-shadow:0_4px_30px_rgba(0,_0,_0,_0.1)] backdrop-filter backdrop-blur-[12.6px] border-b-[1px] border-b-[solid] border-b-[rgba(255,255,255,0.75)] lg:hidden  pt-[0.7rem] pb-[0.7rem] px-[0.7rem] xs:px-[2rem] sm:px-[3rem] z-[60] fixed top-0 left-0 flex right-0 w-full">
-    <button  @click="connectHandler" class="glass py-3 px-[1rem] sm:px-[2rem] font-medium rounded-md">
+    <button  @click="connectHandler" class="glass py-3 text-white px-[1rem] sm:px-[2rem] font-medium rounded-md">
       <div v-if="isConnected">Buy <span class="text-[#FFA500] font-bold">$COM</span></div>
                   <span v-else>{{ btnText }}</span>
     </button>
@@ -90,7 +181,10 @@
           <li class="hover:text-[#FFA500]"><a href="https://compad.org/?data=#About" target="_blank" rel="noopener noreferrer">About</a></li>
                     <li class="hover:text-[#FFA500]"><a href="https://compad.org/?data=#Roadmap" target="_blank" rel="noopener noreferrer">Roadmap</a></li>
                     <li class="hover:text-[#FFA500]"><a href="https://compad-1.gitbook.io/compad-white-paper" target="_blank" rel="noopener noreferrer">Whitepaper</a></li>
-                    <button class="glass py-3 px-[2rem] w-fit font-medium rounded-md">Buy <span class="text-[#FFA500] font-bold">$COM</span></button>
+                    <button @click="connectHandler" class="glass py-3 px-[2rem] w-fit font-medium rounded-md">
+                      <div v-if="isConnected">Buy <span class="text-[#FFA500] font-bold">$COM</span></div>
+                  <span v-else>{{ btnText }}</span>
+                    </button>
         </ul>
     </div>
     <section :class="{'bg-[rgba(255,_255,_255,_0.44)]  [box-shadow:0_4px_30px_rgba(0,_0,_0,_0.1)] backdrop-filter backdrop-blur-[12.6px] border-[1px] border-[solid] border-[rgba(255,255,255,0.75)]  w-[100%] top-[0.6rem] xl:w-[1200px] px-[2.5rem] fixed  right-0 left-0 xl:mx-auto  rounded-[4rem] z-[60] dark:bg-transparent pt-[0.2rem] pb-[0.5rem] xl:pb-[0.5rem]' :scrolled === true, 'relative text-white border-b-[1px] backdrop-blur-[8.6px] border-b-[solid] border-b-[rgba(255,255,255,0.75)] xl:px-0 sm:px-[3rem] xs:px-[2rem] xxs:px-[1rem] px-[0.8rem] pb-[0.7rem] flex' : scrolled === false, 'hidden lg:block' : isSide}" class="hidden lg:block ">
