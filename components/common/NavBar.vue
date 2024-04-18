@@ -192,7 +192,7 @@ createWeb3Modal({
   enableAnalytics: true, // Optional - defaults to your Cloud configuration
   enableOnramp: true // Optional - false as default
 })
-isConnected.value = false;
+isConnected.value = true;
 }
 </script>
 
