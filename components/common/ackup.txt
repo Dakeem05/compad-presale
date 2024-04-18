@@ -1,0 +1,97 @@
+//   async function connectHandler () {
+//     if(typeof window.ethereum != undefined){
+//       try {
+//         const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+//         const account = accounts[0];
+//         isConnected.value = true;
+//         const chainId = '0x38';
+//         const currentChainId = await getCurrentChainId();
+//         try {
+//           if (currentChainId === chainId) {
+//             // return;
+//           } else {
+//             await window.ethereum.request({
+//               method: 'wallet_addEthereumChain',
+//               params: [
+//                 {
+//                   chainId,
+//                   chainName: 'Binance Smart Chain',
+//                   nativeCurrency: {
+//                     name: 'BNB',
+//                     symbol: 'bnb',
+//                     decimals: 18,
+//                   },
+//                   rpcUrls: ['https://bsc-dataseed.binance.org/'],
+//                   blockExplorerUrls: ['https://bscscan.com/'],
+//                 },
+//               ],
+//             });
+//           }
+//           await window.ethereum.request({
+//             method: 'wallet_switchEthereumChain',
+//             params: [{ chainId }],
+//           });
+//         } catch (error) {
+//           console.error('Error adding and switching to BSC network:', error);
+//         }
+//         async function getCurrentChainId() {
+//           try {
+//             const chainId = await window.ethereum.request({
+//               method: 'eth_chainId',
+//             });
+//             return chainId;
+//           } catch (error) {
+//             console.error('Error getting current chain ID:', error);
+//             return null;
+//           }
+//         }
+//         // const account = await connectWallet();
+//         // if (account) {
+//         //   const balance = await getBSCBalance(account);
+//         //   bnbBalance.value = balance;
+//         //   console.log(account);
+//         //   console.log(bnbBalance.value);
+//         // }
+//         console.log(account);
+//         try {
+//           const balance = await window.ethereum.request({
+//             method: 'eth_getBalance',
+//             params: [account, 'latest'],
+//           });
+
+//         // Convert balance from Wei to BNB
+//         // const balanceInBNB = window.ethereum.utils.fromWei(balance, 'ether');
+//         // console.log('BSC Balance:', balanceInBNB, 'BNB');
+//         // console.log(balanceInBNB);
+//         // console.log('answer');
+// console.log(await window.ethereum.request({method: 'eth_utils'}));
+//         if (window.ethereum.request({method: 'eth_utils'})) {
+//       // Convert balance from Wei to BNB
+//       console.log('fixed');
+//       const balanceInBNB = window.ethereum.request({method: 'eth_utils'}).fromWei(balance, 'ether');
+//       console.log('BSC Balance:', balanceInBNB, 'BNB');
+//       return balanceInBNB;
+//     } else {
+//       console.error('window.ethereum.utils is undefined');
+//       return 'Error fetching balance';
+//     }
+//         // return balanceInBNB;
+//       } catch (error) {
+//         console.error('Error fetching BSC balance:', error);
+//         // return 'Error fetching balance';
+//       }
+//       console.log('after');
+
+//         return account;
+//       } catch (error) {
+//         isConnected.value = false;
+//         btnText.value = 'Connection denied';
+//         setTimeout(() => {
+//           btnText.value = 'Connect wallet';
+//         }, 2000);
+//       }
+//     } else {
+//       isConnected.value = false;
+//       btnText.value = 'Install metamask';
+//     }
+//   }
