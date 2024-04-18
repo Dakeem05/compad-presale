@@ -232,6 +232,7 @@ isConnected.value = true;
                 <button v-if="!isConnected" @click="connectHandler" class="bg-white py-3 px-[2rem] font-medium mt-[1.4rem] rounded-md">
                   <span  class="text-white"><w3m-button style="color: white;"/></span>
                 </button>
+                <w3m-button/>
         </ul>
     </div>
     <section :class="{'bg-[rgba(255,_255,_255,_0.44)]  [box-shadow:0_4px_30px_rgba(0,_0,_0,_0.1)] backdrop-filter backdrop-blur-[12.6px] border-[1px] border-[solid] border-[rgba(255,255,255,0.75)]  w-[100%] top-[0.6rem] xl:w-[1200px] px-[2.5rem] fixed  right-0 left-0 xl:mx-auto  rounded-[4rem] z-[60] dark:bg-transparent pt-[0.2rem] pb-[0.5rem] xl:pb-[0.5rem]' :scrolled === true, 'relative text-white border-b-[1px] backdrop-blur-[8.6px] border-b-[solid] border-b-[rgba(255,255,255,0.75)] xl:px-0 sm:px-[3rem] xs:px-[2rem] xxs:px-[1rem] px-[0.8rem] pb-[0.7rem] flex' : scrolled === false, 'hidden lg:block' : isSide}" class="hidden lg:block ">
