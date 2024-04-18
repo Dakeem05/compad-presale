@@ -182,17 +182,16 @@ const config = defaultWagmiConfig({
 //     }
 //   }
 
-
 async function connectHandler(){
-  // modal.open();
   reconnect(config)
-// 3. Create modal
-createWeb3Modal({
+  // 3. Create modal
+  createWeb3Modal({
   wagmiConfig: config,
   projectId,
   enableAnalytics: true, // Optional - defaults to your Cloud configuration
   enableOnramp: true // Optional - false as default
-})
+  })
+  // modal.open();
 isConnected.value = true;
 }
 </script>
@@ -200,10 +199,12 @@ isConnected.value = true;
 
 <template>
   <section class="bg-[rgba(255,_255,_255,_0.14)]  [box-shadow:0_4px_30px_rgba(0,_0,_0,_0.1)] backdrop-filter backdrop-blur-[12.6px] border-b-[1px] border-b-[solid] border-b-[rgba(255,255,255,0.75)] lg:hidden  pt-[0.7rem] pb-[0.7rem] px-[0.7rem] xs:px-[2rem] sm:px-[3rem] z-[60] fixed top-0 left-0 flex right-0 w-full">
-    <button  @click="connectHandler" class="glass py-3 text-white px-[1rem] sm:px-[2rem] font-medium rounded-md">
-      <div v-if="isConnected">Buy <span class="text-[#FFA500] font-bold">$COM</span></div>
-                  <span v-else class="text-white">{{ btnText }}</span>
-    </button>
+    <button v-if="isConnected" @click="connectHandler" class="glass text-white py-3 px-[2rem] font-medium mt-[1.4rem] rounded-md">
+                  <div >Buy presale <span class="text-[#FFA500] font-bold">$COM</span></div>
+                </button>
+                <button v-if="!isConnected" @click="connectHandler" class="bg-white py-3 px-[2rem] font-medium mt-[1.4rem] rounded-md">
+                  <span  class="text-white"><w3m-button style="color: white;"/></span>
+                </button>
             <div class=" w-fit absolute top-2/4 left-2/4 -translate-x-1/2 -translate-y-1/2 mx-auto">
               <router-link to="/" class="text-[2.2rem] text-black flex gap-2 font-surfer font-[400]">
                 <div class=" flex">
@@ -224,11 +225,12 @@ isConnected.value = true;
           <li class="hover:text-[#FFA500]"><a href="https://compad.org/?data=#About" target="_blank" rel="noopener noreferrer">About</a></li>
                     <li class="hover:text-[#FFA500]"><a href="https://compad.org/?data=#Roadmap" target="_blank" rel="noopener noreferrer">Roadmap</a></li>
                     <li class="hover:text-[#FFA500]"><a href="https://compad-1.gitbook.io/compad-white-paper" target="_blank" rel="noopener noreferrer">Whitepaper</a></li>
-                    <button @click="connectHandler" class="glass py-3 px-[2rem] text-white w-fit font-medium rounded-md">
-                      <div v-if="isConnected">Buy <span class="text-[#FFA500] font-bold">$COM</span></div>
-                  <span v-else class="text-white">{{ btnText }}</span>
-                    </button>
-                    <w3m-button/>
+                    <button v-if="isConnected" @click="connectHandler" class="glass text-white py-3 px-[2rem] font-medium mt-[1.4rem] rounded-md">
+                  <div >Buy presale <span class="text-[#FFA500] font-bold">$COM</span></div>
+                </button>
+                <button v-if="!isConnected" @click="connectHandler" class="bg-white py-3 px-[2rem] font-medium mt-[1.4rem] rounded-md">
+                  <span  class="text-white"><w3m-button style="color: white;"/></span>
+                </button>
         </ul>
     </div>
     <section :class="{'bg-[rgba(255,_255,_255,_0.44)]  [box-shadow:0_4px_30px_rgba(0,_0,_0,_0.1)] backdrop-filter backdrop-blur-[12.6px] border-[1px] border-[solid] border-[rgba(255,255,255,0.75)]  w-[100%] top-[0.6rem] xl:w-[1200px] px-[2.5rem] fixed  right-0 left-0 xl:mx-auto  rounded-[4rem] z-[60] dark:bg-transparent pt-[0.2rem] pb-[0.5rem] xl:pb-[0.5rem]' :scrolled === true, 'relative text-white border-b-[1px] backdrop-blur-[8.6px] border-b-[solid] border-b-[rgba(255,255,255,0.75)] xl:px-0 sm:px-[3rem] xs:px-[2rem] xxs:px-[1rem] px-[0.8rem] pb-[0.7rem] flex' : scrolled === false, 'hidden lg:block' : isSide}" class="hidden lg:block ">
@@ -245,10 +247,12 @@ isConnected.value = true;
                 </ul>
             </div>
             <div>
-              <w3m-button/>
-                <button @click="connectHandler" class="glass py-3 px-[2rem] font-medium mt-[1.4rem] rounded-md">
-                  <div v-if="isConnected">Buy presale <span class="text-[#FFA500] font-bold">$COM</span></div>
-                  <span v-else>{{ btnText }}</span>
+              
+                <button v-if="isConnected" @click="connectHandler" class="glass py-3 px-[2rem] font-medium mt-[1.4rem] rounded-md">
+                  <div >Buy presale <span class="text-[#FFA500] font-bold">$COM</span></div>
+                </button>
+                <button v-if="!isConnected" @click="connectHandler" class="bg-white py-3 px-[2rem] font-medium mt-[1.4rem] rounded-md">
+                  <span  class="text-white"><w3m-button style="color: white;"/></span>
                 </button>
             </div>
         </div>
